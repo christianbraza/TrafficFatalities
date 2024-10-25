@@ -24,7 +24,7 @@ def photo_rec(image_path):
         {
         "role": "user",
         "content": [
-            {"type": "text", "text": "What’s in this image in terms of food?"},
+            {"type": "text", "text": "What’s in this image?"},
             {
             "type": "image_url",
             "image_url": {
