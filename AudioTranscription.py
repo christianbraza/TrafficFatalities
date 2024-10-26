@@ -4,7 +4,6 @@ import openai
 openai.api_key = "OPEN-AI-KEY"
 
 def transcribe_audio(audio_file):
-    # Use the transcribe method from the Audio class
     transcription = openai.Audio.transcribe(
         model="whisper-1",
         file=audio_file
