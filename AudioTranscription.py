@@ -1,7 +1,8 @@
 import streamlit as st
 import openai
+import os 
 
-openai.api_key = "OPEN-AI-KEY"
+openai.api_key = os.environ["OPENAI_API_KEY"]
 
 def transcribe_audio(audio_file):
     transcription = openai.Audio.transcribe(
