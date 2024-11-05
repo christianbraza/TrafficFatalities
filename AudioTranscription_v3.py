@@ -10,6 +10,7 @@ st.write("Record your voice of what accident you saw, along with details such as
 
 #st.sidebar.markdown("Report Audio Transcriptions")
 
+# allows user to record their voice with dedicated audio recorder
 audio_value = st.experimental_audio_input(" ")
 
 st.write ("or")
