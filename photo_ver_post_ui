@@ -1,0 +1,88 @@
+import time
+import openai
+from openai import OpenAI
+import os
+import base64
+import requests
+import streamlit as st
+
+def encode_image(image_path):
+  with open(image_path, "rb") as image_file:
+    return base64.b64encode(image_file.read()).decode('utf-8')
+
+st.title("Traffic Accident Image Submission")
+language_option = st.selectbox("Select output language:", ["English", "Spanish", "French", "German", "Chinese"])
+uploaded_file = st.file_uploader("Please upload images of Traffic Accidents", type=["png", "jpg", "jpeg"])
+
+enable = st.checkbox("Enable camera")
+picture = st.camera_input("Take a picture", disabled=not enable)
+
+if picture:
+    file_path = os.path.join('images', 'captured_image.png')
+
+    with open(file_path, 'wb') as f:
+        f.write(picture.getbuffer())
+
+openai.api_key = os.environ["OPENAI_API_KEY"]
+client = OpenAI()
+
+
+def photo_rec(image_path, language="English"):
+    base64_image = encode_image(image_path)
+    response = client.chat.completions.create(
+    model="gpt-4-turbo",
+    messages=[
+        {
+        "role": "user",
+        "content": [
+            {"type": "text", "text": f"What’s in this image? Please respond in {language}."},
+            {
+            "type": "image_url",
+            "image_url": {
+                "url": f"data:image/png;base64,{base64_image}",
+            },
+            },
+        ],
+        }
+    ],
+    max_tokens=300,
+    )
+    return response.choices[0].message.content
+
+
+if uploaded_file is not None:
+    with open(os.path.join('images',uploaded_file.name), 'wb') as f:
+        f.write(uploaded_file.getbuffer())
+    st.success("Saved File: {} to images".format(uploaded_file.name))
+    progress_bar = st.progress(0)
+    
+    # Simulate a long-running process
+    for i in range(100):
+        # Update the progress bar
+        progress_bar.progress(i + 1)
+        # Simulate some processing time
+        time.sleep(0.05)  # Adjust time as needed
+
+    # Indicate completion
+    st.success("Processing completed!")
+    image_path = os.path.join('images',uploaded_file.name)
+    st.image(image_path)
+    st.subheader("Description:", divider=True)
+    with st.spinner("Analyzing the image..."):
+        content = photo_rec(image_path, language=language_option)
+        # st.write(content)
+        txt = st.text_area(
+            "Input Additional Comments:",
+            content
+        )
+        st.button("Go to generate report")
+
+if picture is not None:
+    image_path = os.path.join('images','captured_image.png')
+    st.image(image_path)
+    st.subheader("Description:", divider=True)
+    content = photo_rec(image_path)
+    txt = st.text_area(
+        "Input Additional Comments:",
+        content
+    )
