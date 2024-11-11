@@ -1,3 +1,4 @@
+import os
 import openai
 import streamlit as st
 import sounddevice as sd
@@ -10,7 +11,7 @@ import tempfile
 st.set_page_config(page_title="AI-Powered Traffic Incident Reporter", layout="centered", page_icon="🚦")
 
 # Set up OpenAI API key
-openai.api_key = ""  # Replace with your actual OpenAI API key
+openai.api_key = os.environ["OPENAI_API_KEY"]  # Replace with your actual OpenAI API key
 
 # Custom CSS styling for a polished design
 st.markdown("""
